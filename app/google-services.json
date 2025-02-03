@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "645889176028",
+    "project_id": "project-portofolio-191003",
+    "storage_bucket": "project-portofolio-191003.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:645889176028:android:ace5a6eb026f8e83169f19",
+        "android_client_info": {
+          "package_name": "com.example.leafcheck"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBpGAf8F3wOe5X6C1x530ArcH3G61rprcA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

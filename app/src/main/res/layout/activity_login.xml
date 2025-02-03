@@ -12,7 +12,7 @@
     tools:context=".Login">
 
     <ImageView
-        android:id="@+id/imageView"
+        android:id="@+id/logoview"
         android:layout_width="251dp"
         android:layout_height="140dp"
         card_view:srcCompat="@drawable/leafcheckicon" />
@@ -96,6 +96,13 @@
                 android:text="forgot password?"
                 android:textAlignment="textEnd"
                 android:textColor="#000000" />
+
+            <ImageView
+                android:id="@+id/googlesignin"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                card_view:srcCompat="@drawable/common_google_signin_btn_icon_light"
+                tools:visibility="visible" />
 
         </LinearLayout>
 

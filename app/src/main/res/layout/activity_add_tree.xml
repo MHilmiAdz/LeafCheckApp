@@ -9,10 +9,10 @@
     android:gravity="center"
     android:orientation="vertical"
     android:background="@color/white"
-    tools:context=".Register">
+    tools:context=".AddTree">
 
     <ImageView
-        android:id="@+id/logoview"
+        android:id="@+id/leafPhoto"
         android:layout_width="251dp"
         android:layout_height="140dp"
         card_view:srcCompat="@drawable/leafcheckicon" />
@@ -35,24 +35,23 @@
 
 
             <TextView
-                android:id="@+id/registerText"
+                android:id="@+id/addTextTitle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Register"
+                android:text="Tambah Pohon"
                 android:textAlignment="center"
                 android:textColor="@color/Leafcolor"
                 android:textSize="24sp"
                 android:textStyle="bold" />
 
             <EditText
-                android:id="@+id/email"
-                android:layout_width="match_parent"
-                android:layout_height="50dp"
+                android:id="@+id/treeAddName"
+                android:layout_width="298dp"
+                android:layout_height="49dp"
                 android:layout_marginTop="40dp"
                 android:background="@drawable/custom_edittext"
-                android:drawableLeft="@drawable/baseline_person_24"
                 android:drawablePadding="8dp"
-                android:hint="Email"
+                android:hint="Nama Pohon"
                 android:padding="8dp"
                 android:textColor="@color/black"
                 android:textColorHighlight="@color/cardview_dark_background"
@@ -60,31 +59,13 @@
                 android:textSize="16sp" />
 
             <EditText
-                android:id="@+id/password"
-                android:layout_width="match_parent"
-                android:layout_height="50dp"
+                android:id="@+id/descAddTree"
+                android:layout_width="298dp"
+                android:layout_height="174dp"
                 android:layout_marginTop="20dp"
                 android:background="@drawable/custom_edittext"
-                android:drawableLeft="@drawable/baseline_lock_24"
                 android:drawablePadding="8dp"
-                android:hint="Password"
-                android:inputType="textPassword"
-                android:padding="8dp"
-                android:textColor="@color/black"
-                android:textColorHighlight="@color/cardview_dark_background"
-                android:textColorHint="@color/gray"
-                android:textSize="16sp" />
-
-            <EditText
-                android:id="@+id/retypepassword"
-                android:layout_width="match_parent"
-                android:layout_height="50dp"
-                android:layout_marginTop="20dp"
-                android:background="@drawable/custom_edittext"
-                android:drawableLeft="@drawable/baseline_lock_24"
-                android:drawablePadding="8dp"
-                android:hint="Re-type Password"
-                android:inputType="textPassword"
+                android:hint="Deskripsi Pohon"
                 android:padding="8dp"
                 android:textColor="@color/black"
                 android:textColorHighlight="@color/cardview_dark_background"
@@ -92,12 +73,12 @@
                 android:textSize="16sp" />
 
             <Button
-                android:id="@+id/registerButton"
+                android:id="@+id/addTreeButton"
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
                 android:layout_marginTop="30dp"
                 android:backgroundTint="@color/Leafcolor"
-                android:text="Register"
+                android:text="Tambah Pohon"
                 android:textColor="@color/white"
                 android:textSize="18sp"
                 android:background="@drawable/custom_edittext" />
@@ -105,17 +86,5 @@
         </LinearLayout>
 
     </androidx.cardview.widget.CardView>
-
-    <TextView
-        android:id="@+id/loginTextReturn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="20dp"
-        android:padding="8dp"
-        android:text="Login"
-        android:textAlignment="center"
-        android:textColor="@color/Leafcolor"
-        android:textSize="14sp" />
-
 
 </LinearLayout>

@@ -19,13 +19,11 @@ import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.AuthCredential
 import com.google.firebase.auth.AuthResult
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.GoogleAuthProvider
 
 class Login : AppCompatActivity() {
 
     // UI Elements
-    private lateinit var loginText: TextView
     private lateinit var email: EditText
     private lateinit var password: EditText
     private lateinit var loginButton: Button
@@ -49,7 +47,6 @@ class Login : AppCompatActivity() {
         }
 
         // Initialize UI elements
-        loginText = findViewById(R.id.loginText)
         email = findViewById(R.id.email)
         password = findViewById(R.id.password)
         loginButton = findViewById(R.id.loginButton)
@@ -60,12 +57,12 @@ class Login : AppCompatActivity() {
         // Initialize Firebase Auth
         firebaseAuth = FirebaseAuth.getInstance()
 
-        // Check if user is already signed in
-        val currentUser = firebaseAuth.currentUser
-        if (currentUser != null) {
-            goToMain() // Skip login and go to main screen
-            return
-        }
+//        // Check if user is already signed in
+//        val currentUser = firebaseAuth.currentUser
+//        if (currentUser != null) {
+//            goToMain() // Skip login and go to main screen
+//            return
+//        }
 
         // Configure Google Sign-In
         gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
@@ -113,7 +110,6 @@ class Login : AppCompatActivity() {
     private fun goToMain() {
         val intent = Intent(this, LeafCheck::class.java)
         startActivity(intent)
-        finish()
     }
 
     // Function to handle login user
@@ -141,6 +137,7 @@ class Login : AppCompatActivity() {
                     goToMain()
                 } else {
                     Toast.makeText(this@Login, "Login gagal!", Toast.LENGTH_SHORT).show()
+                    goToMain()
                 }
             }
     }

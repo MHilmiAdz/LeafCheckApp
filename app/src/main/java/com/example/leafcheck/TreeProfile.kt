@@ -1,20 +1,23 @@
 package com.example.leafcheck
 
+import android.net.Uri
 import android.os.Bundle
-import androidx.activity.enableEdgeToEdge
+import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
 
 class TreeProfile : AppCompatActivity() {
+
+    private lateinit var imgTree: ImageView
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
         setContentView(R.layout.activity_tree_profile)
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
-            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
-            insets
+
+        imgTree = findViewById(R.id.leafImg)
+
+        val imageUri = intent.getStringExtra("imageUri")
+        if (imageUri != null) {
+            imgTree.setImageURI(Uri.parse(imageUri))
         }
     }
 }

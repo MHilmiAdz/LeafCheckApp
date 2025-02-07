@@ -13,9 +13,23 @@
 
     <ImageView
         android:id="@+id/leafPhoto"
-        android:layout_width="251dp"
-        android:layout_height="140dp"
+        android:layout_width="274dp"
+        android:layout_height="161dp"
+        android:layout_marginBottom="20dp"
+        android:paddingBottom="10dp"
         card_view:srcCompat="@drawable/leafcheckicon" />
+
+    <Button
+        android:id="@+id/uploadImgButton"
+        android:layout_width="wrap_content"
+        android:layout_height="50dp"
+        android:layout_marginTop="30dp"
+        android:background="@drawable/custom_edittext"
+        android:backgroundTint="@color/Leafcolor"
+        android:paddingHorizontal="20dp"
+        android:text="Upload Image"
+        android:textColor="@color/white"
+        android:textSize="18sp" />
 
     <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
@@ -52,20 +66,6 @@
                 android:background="@drawable/custom_edittext"
                 android:drawablePadding="8dp"
                 android:hint="Nama Pohon"
-                android:padding="8dp"
-                android:textColor="@color/black"
-                android:textColorHighlight="@color/cardview_dark_background"
-                android:textColorHint="@color/gray"
-                android:textSize="16sp" />
-
-            <EditText
-                android:id="@+id/descAddTree"
-                android:layout_width="298dp"
-                android:layout_height="174dp"
-                android:layout_marginTop="20dp"
-                android:background="@drawable/custom_edittext"
-                android:drawablePadding="8dp"
-                android:hint="Deskripsi Pohon"
                 android:padding="8dp"
                 android:textColor="@color/black"
                 android:textColorHighlight="@color/cardview_dark_background"

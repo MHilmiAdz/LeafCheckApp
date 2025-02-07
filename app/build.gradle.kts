@@ -41,6 +41,7 @@ android {
 }
 
 dependencies {
+    implementation(libs.okhttp)
     implementation(libs.play.services.auth)
     implementation(platform(libs.firebase.bom))
     implementation(libs.google.firebase.analytics)

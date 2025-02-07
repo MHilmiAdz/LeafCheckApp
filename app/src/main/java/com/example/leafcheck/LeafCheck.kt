@@ -25,8 +25,6 @@ class LeafCheck : AppCompatActivity() {
     private lateinit var treeList: ArrayList<TreeData>
     private lateinit var dbTree: FirebaseFirestore
 
-
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_leaf_check)
@@ -36,8 +34,13 @@ class LeafCheck : AppCompatActivity() {
         recyclerView = findViewById(R.id.recyclerView)
         recyclerView.layoutManager = LinearLayoutManager(this)
         recyclerView.setHasFixedSize(true)
-        treeList = arrayListOf()
-        myTreeAdapter = RecyclerAdapter(treeList)
+        treeList = ArrayList()
+        myTreeAdapter = RecyclerAdapter(treeList) { treeData ->
+            // This code will be executed when an item is clicked
+            // 'treeData' is the TreeData object that was clicked
+            // You can do something with the treeData here, like:
+            goToTreeProfile()
+        }
         recyclerView.adapter = myTreeAdapter
         dbTree = FirebaseFirestore.getInstance()
 
@@ -55,6 +58,10 @@ class LeafCheck : AppCompatActivity() {
         }
         // Set default selection
         bottomNavigationView.selectedItemId = R.id.nav_home
+
+        fab.setOnClickListener {
+            goToAddTree()
+        }
     }
 
     // Function to navigate to the Main activity
@@ -71,6 +78,8 @@ class LeafCheck : AppCompatActivity() {
 
     private fun goToAddTree(){
 
+        val intent = Intent(this, AddTree::class.java)
+        startActivity(intent)
     }
 
     private fun EventChangeListener(){

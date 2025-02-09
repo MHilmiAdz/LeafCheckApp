@@ -82,6 +82,7 @@
                 android:layout_marginTop="30dp"
                 android:backgroundTint="@color/Leafcolor"
                 android:text="Login"
+                android:textColor="@color/white"
                 android:textSize="18sp"
                 app:cornerRadius="20dp" />
 
@@ -95,7 +96,7 @@
                 android:paddingBottom="10dp"
                 android:text="forgot password?"
                 android:textAlignment="textEnd"
-                android:textColor="#000000" />
+                android:textColor="@color/Leafcolor" />
 
             <ImageView
                 android:id="@+id/googlesignin"

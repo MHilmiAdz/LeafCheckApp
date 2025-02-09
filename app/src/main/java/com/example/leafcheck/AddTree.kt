@@ -1,6 +1,7 @@
 package com.example.leafcheck
 
 import android.app.Activity
+import android.app.AlertDialog
 import android.content.Intent
 import android.graphics.Bitmap
 import android.net.Uri
@@ -10,6 +11,7 @@ import android.util.Log
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import okhttp3.Callback
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
@@ -22,6 +24,8 @@ import java.io.FileOutputStream
 import java.io.IOException
 import org.json.JSONObject
 import com.google.firebase.firestore.FirebaseFirestore
+import okhttp3.Call
+import okhttp3.Response
 import java.util.Date
 
 class AddTree : AppCompatActivity() {
@@ -59,7 +63,7 @@ class AddTree : AppCompatActivity() {
         startActivityForResult(intent, REQUEST_IMAGE_CAPTURE)
     }
 
-    @Deprecated("This method has been deprecated in favor of using the Activity Result API\n      which brings increased type safety via an {@link ActivityResultContract} and the prebuilt\n      contracts for common intents available in\n      {@link androidx.activity.result.contract.ActivityResultContracts}, provides hooks for\n      testing, and allow receiving results in separate, testable classes independent from your\n      activity. Use\n      {@link #registerForActivityResult(ActivityResultContract, ActivityResultCallback)}\n      with the appropriate {@link ActivityResultContract} and handling the result in the\n      {@link ActivityResultCallback#onActivityResult(Object) callback}.")
+    @Deprecated("This method has been deprecated in favor of using the Activity Result API")
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
@@ -82,9 +86,9 @@ class AddTree : AppCompatActivity() {
     }
 
     private fun uploadImage(imageUri: Uri) {
-        val file = getFileFromUri(imageUri)  // Convert Uri to File
+        val file = getFileFromUri(imageUri)
         if (file == null || !file.exists() || file.length() == 0L) {
-            Log.e("File Error", "File does not exist, is empty, or could not be found.")
+            showErrorDialog("File Error", "File does not exist, is empty, or could not be found.")
             return
         }
 
@@ -92,7 +96,7 @@ class AddTree : AppCompatActivity() {
 
         val requestBody = file.asRequestBody("image/*".toMediaTypeOrNull())
 
-        val body = MultipartBody.Part.createFormData("file", file.name, requestBody)  // Adjust key name if needed
+        val body = MultipartBody.Part.createFormData("file", file.name, requestBody)
 
         val request = Request.Builder()
             .url(API_URL)
@@ -105,17 +109,33 @@ class AddTree : AppCompatActivity() {
 
         val client = OkHttpClient()
         client.newCall(request).enqueue(object : Callback {
-            override fun onFailure(call: okhttp3.Call, e: IOException) {
-                Log.e("Upload Error", "Failed to send image: ${e.message}")
+            override fun onFailure(call: Call, e: IOException) {
+                runOnUiThread {
+                    Toast.makeText(this@AddTree, "Tidak ada Respon", Toast.LENGTH_SHORT).show()
+                }
             }
 
-            override fun onResponse(call: okhttp3.Call, response: okhttp3.Response) {
+            override fun onResponse(call: Call, response: Response) {
+                if (!response.isSuccessful) {
+                    runOnUiThread {
+                        Toast.makeText(this@AddTree, "Respon API berhasil di dapatkan", Toast.LENGTH_SHORT).show()
+                    }
+                    return
+                }
+
                 val responseData = response.body?.string() ?: "{}"
-                Log.d("API Response", responseData)  // Print full response
-                // Parse response and upload to Firebase
+                Log.d("API Response", responseData)
                 parseAndUploadResponse(responseData, imageUri)
             }
         })
+    }
+
+    private fun showErrorDialog(title: String, message: String) {
+        AlertDialog.Builder(this)
+            .setTitle(title)
+            .setMessage(message)
+            .setPositiveButton("OK") { dialog, _ -> dialog.dismiss() }
+            .show()
     }
 
     private fun goToTreeProfile(imageUri: Uri) {
@@ -145,12 +165,21 @@ class AddTree : AppCompatActivity() {
                 .add(treeData)
                 .addOnSuccessListener { documentReference ->
                     Log.d("Firestore", "Document added with ID: ${documentReference.id}")
+                    runOnUiThread {
+                        goToTreeProfile(imageUri)
+                    }
                 }
                 .addOnFailureListener { e ->
                     Log.e("Firestore Error", "Error adding document", e)
+                    runOnUiThread {
+                        showErrorDialog("Firestore Error", "Failed to save data: ${e.message}")
+                    }
                 }
         } catch (e: Exception) {
             Log.e("JSON Parse Error", "Failed to parse response: ${e.message}")
+            runOnUiThread {
+                showErrorDialog("Parse Error", "Failed to parse server response: ${e.message}")
+            }
         }
     }
 
@@ -163,11 +192,13 @@ class AddTree : AppCompatActivity() {
             inputStream.close()
             outputStream.close()
 
-            // Debugging: Check file existence
             Log.d("File Conversion", "File created: ${file.exists()}, Size: ${file.length()} bytes")
 
         } catch (e: IOException) {
             Log.e("File Conversion Error", "Failed to convert Uri to File: ${e.message}")
+            runOnUiThread {
+                showErrorDialog("File Error", "Failed to process image: ${e.message}")
+            }
             return null
         }
         return file

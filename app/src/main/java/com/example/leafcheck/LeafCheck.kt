@@ -35,11 +35,8 @@ class LeafCheck : AppCompatActivity() {
         recyclerView.layoutManager = LinearLayoutManager(this)
         recyclerView.setHasFixedSize(true)
         treeList = ArrayList()
-        myTreeAdapter = RecyclerAdapter(treeList) { treeData ->
-            // This code will be executed when an item is clicked
-            // 'treeData' is the TreeData object that was clicked
-            // You can do something with the treeData here, like:
-            goToTreeProfile()
+        myTreeAdapter = RecyclerAdapter(treeList) { treeId ->
+            goToTreeProfile(treeId)
         }
         recyclerView.adapter = myTreeAdapter
         dbTree = FirebaseFirestore.getInstance()
@@ -66,13 +63,15 @@ class LeafCheck : AppCompatActivity() {
 
     // Function to navigate to the Main activity
 
-    private fun goToProfile() {
-        val intent = Intent(this, UserProfile::class.java)
+    private fun goToTreeProfile(treeId: String) {
+        val intent = Intent(this, TreeProfile::class.java).apply {
+            putExtra("treeId", treeId) // Pass only the document ID
+        }
         startActivity(intent)
     }
 
-    private fun goToTreeProfile() {
-        val intent = Intent(this, TreeProfile::class.java)
+    private fun goToProfile() {
+        val intent = Intent(this, UserProfile::class.java)
         startActivity(intent)
     }
 
@@ -82,26 +81,23 @@ class LeafCheck : AppCompatActivity() {
         startActivity(intent)
     }
 
-    private fun EventChangeListener(){
+    private fun EventChangeListener() {
         dbTree = FirebaseFirestore.getInstance()
-        dbTree.collection("Trees").orderBy("treeName", Query.Direction.ASCENDING).
-                addSnapshotListener(object : EventListener<QuerySnapshot>{
-                    override fun onEvent(
-                        value: QuerySnapshot?,
-                        error: FirebaseFirestoreException?
-                    ) {
-                        if (error != null){
-                            Log.e("Firestore Error", error.message.toString())
-                            return
-                        }
+        dbTree.collection("Trees").orderBy("treeName", Query.Direction.ASCENDING)
+            .addSnapshotListener { value, error ->
+                if (error != null) {
+                    Log.e("Firestore Error", error.message.toString())
+                    return@addSnapshotListener
+                }
 
-                        for (dc : DocumentChange in value?.documentChanges!!){
-                            if (dc.type == DocumentChange.Type.ADDED){
-                                treeList.add(dc.document.toObject(TreeData::class.java))
-                            }
-                        }
-                        myTreeAdapter.notifyDataSetChanged()
+                for (dc in value?.documentChanges!!) {
+                    if (dc.type == DocumentChange.Type.ADDED) {
+                        val treeData = dc.document.toObject(TreeData::class.java)
+                        treeData.treeId = dc.document.id // Store document ID
+                        treeList.add(treeData)
                     }
-                })
+                }
+                myTreeAdapter.notifyDataSetChanged()
+            }
     }
 }

@@ -36,7 +36,7 @@ class AddTree : AppCompatActivity() {
     private lateinit var namaPohon: EditText
     private var capturedImageUri: Uri? = null
     private val REQUEST_IMAGE_CAPTURE = 1
-    private val API_URL = "http://192.168.1.7:8000/predict"
+    private val API_URL = "https://leafcheckapi.onrender.com/predict"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

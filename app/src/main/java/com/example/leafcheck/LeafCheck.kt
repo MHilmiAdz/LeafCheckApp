@@ -15,6 +15,7 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.FirebaseFirestoreException
 import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.QuerySnapshot
+import com.google.firebase.auth.FirebaseAuth
 
 class LeafCheck : AppCompatActivity() {
 
@@ -23,6 +24,8 @@ class LeafCheck : AppCompatActivity() {
     private lateinit var fab: FloatingActionButton
     private lateinit var myTreeAdapter: RecyclerAdapter
     private lateinit var treeList: ArrayList<TreeData>
+
+    //System
     private lateinit var dbTree: FirebaseFirestore
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -61,6 +64,12 @@ class LeafCheck : AppCompatActivity() {
         }
     }
 
+    @Deprecated("This method has been deprecated in favor of using the\n      {@link OnBackPressedDispatcher} via {@link #getOnBackPressedDispatcher()}.\n      The OnBackPressedDispatcher controls how back button events are dispatched\n      to one or more {@link OnBackPressedCallback} objects.")
+    override fun onBackPressed() {
+        super.onBackPressed()
+        finishAffinity() // Closes all activities and exits the app
+    }
+
     // Function to navigate to the Main activity
 
     private fun goToTreeProfile(treeId: String) {
@@ -76,24 +85,33 @@ class LeafCheck : AppCompatActivity() {
     }
 
     private fun goToAddTree(){
-
         val intent = Intent(this, AddTree::class.java)
         startActivity(intent)
     }
 
     private fun EventChangeListener() {
-        dbTree = FirebaseFirestore.getInstance()
-        dbTree.collection("Trees").orderBy("treeName", Query.Direction.ASCENDING)
+        val currentUser = FirebaseAuth.getInstance().currentUser
+        val userEmail = currentUser?.email
+
+        if (userEmail == null) {
+            Log.e("Firestore Error", "User not logged in")
+            return
+        }
+
+        dbTree.collection("Trees")
+            .whereEqualTo("owner", userEmail) // 🔥 Filter trees by the owner's email
+            .orderBy("treeName", Query.Direction.ASCENDING)
             .addSnapshotListener { value, error ->
                 if (error != null) {
                     Log.e("Firestore Error", error.message.toString())
                     return@addSnapshotListener
                 }
 
+                treeList.clear() // 🔥 Prevent duplicate entries
                 for (dc in value?.documentChanges!!) {
                     if (dc.type == DocumentChange.Type.ADDED) {
                         val treeData = dc.document.toObject(TreeData::class.java)
-                        treeData.treeId = dc.document.id // Store document ID
+                        treeData.treeId = dc.document.id
                         treeList.add(treeData)
                     }
                 }

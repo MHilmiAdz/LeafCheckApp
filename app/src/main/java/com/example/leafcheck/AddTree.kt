@@ -3,6 +3,7 @@ package com.example.leafcheck
 import android.app.Activity
 import android.app.AlertDialog
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Bundle
@@ -13,6 +14,8 @@ import android.widget.EditText
 import android.widget.ImageView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import okhttp3.Callback
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
@@ -27,6 +30,9 @@ import com.google.firebase.firestore.FirebaseFirestore
 import okhttp3.Call
 import okhttp3.Response
 import java.util.Date
+import android.Manifest
+import com.google.firebase.auth.FirebaseAuth
+
 
 class AddTree : AppCompatActivity() {
 
@@ -34,9 +40,13 @@ class AddTree : AppCompatActivity() {
     private lateinit var btnSubmit: Button
     private lateinit var imgPreview: ImageView
     private lateinit var namaPohon: EditText
+
+    //System
     private var capturedImageUri: Uri? = null
     private val REQUEST_IMAGE_CAPTURE = 1
-    private val API_URL = "https://leafcheckapi.onrender.com/predict"
+    private val CAMERA_PERMISSION_CODE = 101
+    private val API_URL = "http://192.168.1.2:8000/predict"
+    private val fAuth = FirebaseAuth.getInstance()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -48,7 +58,7 @@ class AddTree : AppCompatActivity() {
         namaPohon = findViewById(R.id.treeAddName)
 
         btnCapture.setOnClickListener {
-            openCamera()
+            checkCameraPermission()
         }
 
         btnSubmit.setOnClickListener {
@@ -61,6 +71,26 @@ class AddTree : AppCompatActivity() {
     private fun openCamera() {
         val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
         startActivityForResult(intent, REQUEST_IMAGE_CAPTURE)
+    }
+
+
+    private fun checkCameraPermission() {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.CAMERA), CAMERA_PERMISSION_CODE)
+        } else {
+            openCamera() // Permission granted, open camera
+        }
+    }
+
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        if (requestCode == CAMERA_PERMISSION_CODE) {
+            if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                openCamera()
+            } else {
+                Toast.makeText(this, "Camera permission denied!", Toast.LENGTH_SHORT).show()
+            }
+        }
     }
 
     @Deprecated("This method has been deprecated in favor of using the Activity Result API")
@@ -111,6 +141,7 @@ class AddTree : AppCompatActivity() {
         client.newCall(request).enqueue(object : Callback {
             override fun onFailure(call: Call, e: IOException) {
                 runOnUiThread {
+                    Log.e("API Error", "Failed to upload image: ${e.message}")
                     Toast.makeText(this@AddTree, "Tidak ada Respon", Toast.LENGTH_SHORT).show()
                 }
             }
@@ -138,7 +169,7 @@ class AddTree : AppCompatActivity() {
             .show()
     }
 
-    private fun goToTreeProfile(imageUri: Uri) {
+    private fun goToMain(imageUri: Uri) {
         val intent = Intent(this, LeafCheck::class.java)
         startActivity(intent)
     }
@@ -158,7 +189,9 @@ class AddTree : AppCompatActivity() {
                 "treeCond" to leaf,
                 "treeDesc" to keterangan,
                 "treeName" to namaPohon.text.toString(),
-                "treeType" to leaftype.toInt()
+                "treeType" to leaftype.toInt(),
+                "owner" to (fAuth.currentUser?.email ?: "Unknown"),
+                "favorite" to false
             )
 
             db.collection("Trees")
@@ -166,7 +199,7 @@ class AddTree : AppCompatActivity() {
                 .addOnSuccessListener { documentReference ->
                     Log.d("Firestore", "Document added with ID: ${documentReference.id}")
                     runOnUiThread {
-                        goToTreeProfile(imageUri)
+                        goToMain(imageUri)
                     }
                 }
                 .addOnFailureListener { e ->

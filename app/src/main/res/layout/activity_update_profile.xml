@@ -1,34 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:tools="http://schemas.android.com/tools"
     tools:context=".UpdateProfile">
-
-    <EditText
-        android:id="@+id/editprofil_kolomEditNama"
-        android:layout_width="324dp"
-        android:layout_height="51dp"
-        android:layout_marginTop="8dp"
-        android:background="@drawable/custom_edittext"
-        android:ems="10"
-        android:gravity="center_vertical"
-        android:inputType="text"
-        android:paddingStart="16dp"
-        android:textColor="@color/black"
-        android:textSize="14sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.459"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/editprofil_labelNama" />
 
     <Button
         android:id="@+id/editprofil_tombolSimpanData"
         style="@style/Widget.AppCompat.Button"
-        android:layout_width="334dp"
-        android:layout_height="52dp"
+        android:layout_width="175dp"
+        android:layout_height="50dp"
         android:layout_marginTop="36dp"
         android:backgroundTint="@color/Leafcolor"
         android:text="Simpan Data"
@@ -36,29 +19,15 @@
         android:textColor="@color/white"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.558"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/editprofil_kolomEditUsername"
         app:layout_constraintVertical_bias="0.0" />
-
-    <TextView
-        android:id="@+id/editprofil_labelNama"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="60dp"
-        android:text="Nama Lengkap"
-        android:textColor="@color/black"
-        android:textStyle="bold"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.136"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/editprofil_tombolEditGambar" />
 
     <EditText
         android:id="@+id/editprofil_kolomEditUsername"
         android:layout_width="323dp"
         android:layout_height="49dp"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="80dp"
         android:background="@drawable/custom_edittext"
         android:ems="10"
         android:gravity="center_vertical"
@@ -66,58 +35,49 @@
         android:paddingStart="16dp"
         android:textColor="@color/black"
         android:textSize="14sp"
+        android:hint="Masukkan username baru"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.431"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/editprofil_labelViewUsername" />
-
-    <Button
-        android:id="@+id/editprofil_tombolEditGambar"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="164dp"
-        android:backgroundTint="@color/Leafcolor"
-        android:text="Ubah Gambar"
-        android:textAllCaps="false"
-        android:textColor="@color/white"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.177"
-        app:layout_constraintStart_toEndOf="@+id/editprofil_imageView"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@+id/editprofil_imageView" />
 
     <ImageView
         android:id="@+id/editprofil_imageView"
         android:layout_width="98dp"
         android:layout_height="101dp"
-        android:layout_marginStart="40dp"
-        android:layout_marginTop="112dp"
+        android:layout_marginStart="156dp"
+        android:layout_marginTop="116dp"
+        android:layout_marginEnd="157dp"
+        android:background="@drawable/custom_edittext"
+        android:src="@drawable/baseline_person_24"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:srcCompat="@tools:sample/avatars[3]" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/editprofil_labelViewUsername"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="12dp"
+        android:layout_marginTop="40dp"
         android:text="Username"
         android:textColor="@color/black"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.124"
+        app:layout_constraintHorizontal_bias="0.127"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/editprofil_kolomEditNama" />
+        app:layout_constraintTop_toBottomOf="@+id/editprofil_imageView" />
 
     <ImageButton
-        android:id="@+id/editprofil_tombolKembali"
-        android:layout_width="60dp"
-        android:layout_height="50dp"
+        android:id="@+id/backButtontoHome"
+        style="@style/Widget.AppCompat.ImageButton"
+        android:layout_width="61dp"
+        android:layout_height="45dp"
         android:layout_marginTop="28dp"
+        android:background="@drawable/custom_edittext"
         android:backgroundTint="@color/Leafcolor"
-        android:contentDescription="Kembali"
         android:src="@drawable/baseline_arrow_back_24"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.109"
+        app:layout_constraintHorizontal_bias="0.125"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 

@@ -6,13 +6,10 @@ import android.util.Log
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
-import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.bottomnavigation.BottomNavigationView
-import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 
@@ -26,17 +23,15 @@ class UserProfile : AppCompatActivity() {
     private lateinit var labelEmail: TextView
     private lateinit var ppView: ImageView
 
-    //System
+    // Firebase
     private lateinit var firebaseAuth: FirebaseAuth
+    private lateinit var db: FirebaseFirestore
+    private lateinit var treeAdapter: RecyclerAdapter
+    private var treeList = ArrayList<TreeData>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_user_profile)
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
-            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
-            insets
-        }
 
         bottomNavigationView = findViewById(R.id.bottomNavigationView)
         recyclerView = findViewById(R.id.recyclerView)
@@ -47,11 +42,19 @@ class UserProfile : AppCompatActivity() {
         ppView = findViewById(R.id.profil_imageView)
 
         firebaseAuth = FirebaseAuth.getInstance()
+        db = FirebaseFirestore.getInstance()
+
+        recyclerView.layoutManager = LinearLayoutManager(this)
+        treeAdapter = RecyclerAdapter(treeList) { treeId -> goToTreeProfile(treeId) }
+        recyclerView.adapter = treeAdapter
+
+        // Load user profile & favorite trees
+        loadUserProfile()
+        loadFavoriteTrees()
 
         bottomNavigationView.setOnItemSelectedListener { menuItem ->
             when (menuItem.itemId) {
                 R.id.nav_home -> {
-                    // Handle profile item click
                     goToMain()
                     true
                 }
@@ -59,53 +62,71 @@ class UserProfile : AppCompatActivity() {
             }
         }
 
-        buttonUbahData.setOnClickListener {
-            goToUpdateProfile()
-        }
-
+        buttonUbahData.setOnClickListener { goToUpdateProfile() }
         buttonKeluar.setOnClickListener {
             firebaseAuth.signOut()
             goToLogin()
         }
+    }
 
-        val currentUser = firebaseAuth.currentUser
-        val db = FirebaseFirestore.getInstance()
+    private fun loadUserProfile() {
+        val currentUser = firebaseAuth.currentUser ?: return
+        labelEmail.text = currentUser.email
 
-        if (currentUser != null) {
-            val email = currentUser.email
-            labelEmail.text = email  // Display the email in UI
-
-            db.collection("UserProfiles")
-                .whereEqualTo("userEmail", email)  // Use currentUser.email
-                .get()
-                .addOnSuccessListener { documents ->
-                    if (!documents.isEmpty) {
-                        val document = documents.documents[0]  // Get the first document
-                        val username = document.getString("userName") ?: "Unknown User"
-                        labelNama.text = username  // Display username in UI
-                    } else {
-                        labelNama.text = "Username not found"
-                    }
+        db.collection("UserProfiles")
+            .whereEqualTo("userEmail", currentUser.email)
+            .get()
+            .addOnSuccessListener { documents ->
+                if (!documents.isEmpty) {
+                    val document = documents.documents[0]
+                    labelNama.text = document.getString("userName") ?: "Unknown User"
+                } else {
+                    labelNama.text = "Username not found"
                 }
-                .addOnFailureListener { e ->
-                    labelNama.text = "Error loading username"
-                    Log.e("Firestore", "Error fetching username", e)
+            }
+            .addOnFailureListener { e ->
+                labelNama.text = "Error loading username"
+                Log.e("Firestore", "Error fetching username", e)
+            }
+    }
+
+    private fun loadFavoriteTrees() {
+        val currentUser = firebaseAuth.currentUser ?: return
+
+        db.collection("Trees")
+            .whereEqualTo("favorite", true)
+            .whereEqualTo("owner", currentUser.email) // Filter by user email
+            .get()
+            .addOnSuccessListener { documents ->
+                treeList.clear()
+                for (document in documents) {
+                    val treeData = document.toObject(TreeData::class.java)
+                    treeData.treeId = document.id
+                    treeList.add(treeData)
                 }
+                treeAdapter.notifyDataSetChanged()
+            }
+            .addOnFailureListener { e ->
+                Log.e("Firestore", "Error loading favorite trees", e)
+            }
+    }
+
+    private fun goToTreeProfile(treeId: String) {
+        val intent = Intent(this, TreeProfile::class.java).apply {
+            putExtra("treeId", treeId)
         }
+        startActivity(intent)
     }
 
     private fun goToMain() {
-        val intent = Intent(this, LeafCheck::class.java)
-        startActivity(intent)
+        startActivity(Intent(this, LeafCheck::class.java))
     }
 
     private fun goToUpdateProfile() {
-        val intent = Intent(this, UpdateProfile::class.java)
-        startActivity(intent)
+        startActivity(Intent(this, UpdateProfile::class.java))
     }
 
     private fun goToLogin() {
-        val intent = Intent(this, Login::class.java)
-        startActivity(intent)
+        startActivity(Intent(this, Login::class.java))
     }
 }

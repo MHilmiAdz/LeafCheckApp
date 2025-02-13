@@ -38,12 +38,13 @@ class TreeProfile : AppCompatActivity() {
     private lateinit var favButton: Button
     private lateinit var updateHealthButton: Button
     private lateinit var treeDateHealth: TextView
+    private lateinit var deleteButton: Button
 
     // INITIALIZE SYSTEM
     private lateinit var dbTree: FirebaseFirestore
     private var capturedImageUri: Uri? = null
     private val REQUEST_IMAGE_CAPTURE = 2
-    private val API_URL = "http://192.168.1.2:8000/predict"
+    private val API_URL = "https://leafcheckapi-gcp-645889176028.asia-southeast2.run.app/predict"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -57,8 +58,14 @@ class TreeProfile : AppCompatActivity() {
         backButton = findViewById(R.id.backbutton)
         favButton = findViewById(R.id.favButton)
         updateHealthButton = findViewById(R.id.updateHealth)
+        deleteButton = findViewById(R.id.deleteTreeButton)
 
         dbTree = FirebaseFirestore.getInstance()
+
+        deleteButton.setOnClickListener {
+            val treeId = intent.getStringExtra("treeId") ?: return@setOnClickListener
+            deleteTree(treeId)
+        }
 
         val treeId = intent.getStringExtra("treeId")
         if (treeId != null) {
@@ -324,4 +331,18 @@ class TreeProfile : AppCompatActivity() {
         }
     }
 
+    private fun deleteTree(treeId: String) {
+        dbTree.collection("Trees").document(treeId)
+            .delete()
+            .addOnSuccessListener {
+                Toast.makeText(this, "Tree deleted successfully", Toast.LENGTH_SHORT).show()
+                val intent = Intent(this, LeafCheck::class.java)
+                intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK
+                startActivity(intent)
+                finish()
+            }
+            .addOnFailureListener {
+                Toast.makeText(this, "Failed to delete tree", Toast.LENGTH_SHORT).show()
+            }
+    }
 }

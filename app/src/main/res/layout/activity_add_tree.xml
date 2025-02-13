@@ -60,8 +60,8 @@
 
             <EditText
                 android:id="@+id/treeAddName"
-                android:layout_width="298dp"
-                android:layout_height="49dp"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
                 android:layout_marginTop="40dp"
                 android:background="@drawable/custom_edittext"
                 android:drawablePadding="8dp"

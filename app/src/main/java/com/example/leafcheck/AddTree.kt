@@ -45,8 +45,9 @@ class AddTree : AppCompatActivity() {
     private var capturedImageUri: Uri? = null
     private val REQUEST_IMAGE_CAPTURE = 1
     private val CAMERA_PERMISSION_CODE = 101
-    private val API_URL = "http://192.168.1.2:8000/predict"
+    private val API_URL = "https://leafcheckapi-gcp-645889176028.asia-southeast2.run.app/predict"
     private val fAuth = FirebaseAuth.getInstance()
+    private lateinit var loadingDialog: AlertDialog
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -116,24 +117,25 @@ class AddTree : AppCompatActivity() {
     }
 
     private fun uploadImage(imageUri: Uri) {
+        showLoading() // Show loading before making the API call
+
         val file = getFileFromUri(imageUri)
         if (file == null || !file.exists() || file.length() == 0L) {
-            showErrorDialog("File Error", "File does not exist, is empty, or could not be found.")
+            hideLoading() // Hide loading if file is invalid
+            Toast.makeText(this, "File not found", Toast.LENGTH_SHORT).show()
             return
         }
 
-        Log.d("File Info", "File exists: ${file.exists()}, Size: ${file.length()} bytes")
-
         val requestBody = file.asRequestBody("image/*".toMediaTypeOrNull())
-
         val body = MultipartBody.Part.createFormData("file", file.name, requestBody)
 
         val request = Request.Builder()
             .url(API_URL)
-            .post(MultipartBody.Builder()
-                .setType(MultipartBody.FORM)
-                .addPart(body)
-                .build()
+            .post(
+                MultipartBody.Builder()
+                    .setType(MultipartBody.FORM)
+                    .addPart(body)
+                    .build()
             )
             .build()
 
@@ -141,22 +143,21 @@ class AddTree : AppCompatActivity() {
         client.newCall(request).enqueue(object : Callback {
             override fun onFailure(call: Call, e: IOException) {
                 runOnUiThread {
-                    Log.e("API Error", "Failed to upload image: ${e.message}")
-                    Toast.makeText(this@AddTree, "Tidak ada Respon", Toast.LENGTH_SHORT).show()
+                    hideLoading() // Hide loading if request fails
+                    Toast.makeText(this@AddTree, "API request failed", Toast.LENGTH_SHORT).show()
                 }
             }
 
             override fun onResponse(call: Call, response: Response) {
-                if (!response.isSuccessful) {
-                    runOnUiThread {
-                        Toast.makeText(this@AddTree, "Respon API berhasil di dapatkan", Toast.LENGTH_SHORT).show()
+                runOnUiThread {
+                    hideLoading() // Hide loading after receiving response
+                    if (!response.isSuccessful) {
+                        Toast.makeText(this@AddTree, "API request unsuccessful", Toast.LENGTH_SHORT).show()
+                        return@runOnUiThread
                     }
-                    return
+                    val responseData = response.body?.string() ?: "{}"
+                    parseAndUploadResponse(responseData)
                 }
-
-                val responseData = response.body?.string() ?: "{}"
-                Log.d("API Response", responseData)
-                parseAndUploadResponse(responseData, imageUri)
             }
         })
     }
@@ -169,12 +170,12 @@ class AddTree : AppCompatActivity() {
             .show()
     }
 
-    private fun goToMain(imageUri: Uri) {
+    private fun goToMain() {
         val intent = Intent(this, LeafCheck::class.java)
         startActivity(intent)
     }
 
-    private fun parseAndUploadResponse(responseData: String, imageUri: Uri) {
+    private fun parseAndUploadResponse(responseData: String) {
         try {
             val jsonObject = JSONObject(responseData)
 
@@ -182,32 +183,54 @@ class AddTree : AppCompatActivity() {
             val keterangan = jsonObject.optString("keterangan", "No Description")
             val leaftype = jsonObject.optString("leaftype", "Unknown")
 
-            // Upload data to Firestore
             val db = FirebaseFirestore.getInstance()
-            val treeData = hashMapOf(
-                "condDate" to Date(),
-                "treeCond" to leaf,
-                "treeDesc" to keterangan,
-                "treeName" to namaPohon.text.toString(),
-                "treeType" to leaftype.toInt(),
-                "owner" to (fAuth.currentUser?.email ?: "Unknown"),
-                "favorite" to false
-            )
+            val userEmail = fAuth.currentUser?.email ?: "Unknown"
 
+            // 🔥 Step 1: Check how many trees the user already has
             db.collection("Trees")
-                .add(treeData)
-                .addOnSuccessListener { documentReference ->
-                    Log.d("Firestore", "Document added with ID: ${documentReference.id}")
-                    runOnUiThread {
-                        goToMain(imageUri)
+                .whereEqualTo("owner", userEmail)
+                .get()
+                .addOnSuccessListener { documents ->
+                    if (documents.size() >= 5) {
+                        // 🔥 Step 2: Prevent adding more trees
+                        runOnUiThread {
+                            showErrorDialog("Tree Limit Reached", "You already have 5 trees. Please delete one to add a new tree.")
+                        }
+                    } else {
+                        // 🔥 Step 3: Upload tree data if within the limit
+                        val treeData = hashMapOf(
+                            "condDate" to Date(),
+                            "treeCond" to leaf,
+                            "treeDesc" to keterangan,
+                            "treeName" to namaPohon.text.toString(),
+                            "treeType" to leaftype.toInt(),
+                            "owner" to userEmail,
+                            "favorite" to false
+                        )
+
+                        db.collection("Trees")
+                            .add(treeData)
+                            .addOnSuccessListener { documentReference ->
+                                Log.d("Firestore", "Document added with ID: ${documentReference.id}")
+                                runOnUiThread {
+                                    goToMain()
+                                }
+                            }
+                            .addOnFailureListener { e ->
+                                Log.e("Firestore Error", "Error adding document", e)
+                                runOnUiThread {
+                                    showErrorDialog("Firestore Error", "Failed to save data: ${e.message}")
+                                }
+                            }
                     }
                 }
                 .addOnFailureListener { e ->
-                    Log.e("Firestore Error", "Error adding document", e)
+                    Log.e("Firestore Error", "Failed to check tree count", e)
                     runOnUiThread {
-                        showErrorDialog("Firestore Error", "Failed to save data: ${e.message}")
+                        showErrorDialog("Firestore Error", "Could not check tree limit: ${e.message}")
                     }
                 }
+
         } catch (e: Exception) {
             Log.e("JSON Parse Error", "Failed to parse response: ${e.message}")
             runOnUiThread {
@@ -235,5 +258,21 @@ class AddTree : AppCompatActivity() {
             return null
         }
         return file
+    }
+
+    private fun showLoading() {
+        val builder = AlertDialog.Builder(this)
+        val inflater = layoutInflater
+        val dialogView = inflater.inflate(R.layout.dialog_loading, null)
+        builder.setView(dialogView)
+        builder.setCancelable(false)
+        loadingDialog = builder.create()
+        loadingDialog.show()
+    }
+
+    private fun hideLoading() {
+        if (::loadingDialog.isInitialized && loadingDialog.isShowing) {
+            loadingDialog.dismiss()
+        }
     }
 }

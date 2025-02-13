@@ -23,7 +23,7 @@
                                 <PersistentState>
                                   <option name="values">
                                     <map>
-                                      <entry key="url" value="file:/$USER_HOME$/AppData/Local/Android/Sdk/icons/material/materialicons/arrow_back/baseline_arrow_back_24.xml" />
+                                      <entry key="url" value="file:/$USER_HOME$/AppData/Local/Android/Sdk/icons/material/materialicons/question_mark/baseline_question_mark_24.xml" />
                                     </map>
                                   </option>
                                 </PersistentState>
@@ -33,8 +33,8 @@
                         </option>
                         <option name="values">
                           <map>
-                            <entry key="color" value="ffffff" />
-                            <entry key="outputName" value="baseline_arrow_back_24" />
+                            <entry key="opacityPercent" value="81" />
+                            <entry key="outputName" value="baseline_question_mark_24" />
                             <entry key="sourceFile" value="D:\Coding\LeafCheckApp" />
                           </map>
                         </option>

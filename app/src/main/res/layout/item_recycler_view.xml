@@ -11,45 +11,48 @@
 
         <ImageView
             android:id="@+id/treeImg"
-            android:src="@drawable/applered"
+            android:src="@drawable/appleicon"
             android:layout_width="80dp"
             android:layout_height="80dp" />
 
         <TextView
             android:id="@+id/treeName"
-            android:text="Tree Name"
-            android:textSize="20sp"
-            android:layout_marginTop="6dp"
-            android:maxLines="1"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_alignParentTop="true"
-            android:layout_toRightOf="@+id/treeImg"
-            android:layout_toEndOf="@+id/treeImg"
+            android:layout_marginStart="8dp"
             android:layout_marginLeft="8dp"
-            android:layout_marginStart="8dp" />
+            android:layout_marginTop="6dp"
+            android:layout_toEndOf="@+id/treeImg"
+            android:layout_toRightOf="@+id/treeImg"
+            android:maxLines="1"
+            android:text="Tree Name"
+            android:textColor="@color/Leafcolor"
+            android:textSize="20sp" />
 
         <TextView
             android:id="@+id/treeType"
-            android:text="Tree Type"
-            android:textSize="14sp"
-            android:maxLines="1"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@+id/treeName"
+            android:layout_alignStart="@+id/treeName"
             android:layout_alignLeft="@+id/treeName"
-            android:layout_alignStart="@+id/treeName" />
+            android:maxLines="1"
+            android:text="Tree Type"
+            android:textColor="@color/gray"
+            android:textSize="14sp" />
 
         <TextView
             android:id="@+id/treeCondition"
-            android:text="Tree Condition"
-            android:textSize="14sp"
-            android:maxLines="1"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@+id/treeType"
+            android:layout_alignStart="@+id/treeType"
             android:layout_alignLeft="@+id/treeType"
-            android:layout_alignStart="@+id/treeType" />
+            android:maxLines="1"
+            android:text="Tree Condition"
+            android:textColor="@color/black"
+            android:textSize="14sp" />
 
     </RelativeLayout>
 

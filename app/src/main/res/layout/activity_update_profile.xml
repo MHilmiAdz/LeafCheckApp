@@ -5,6 +5,7 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/white"
     tools:context=".UpdateProfile">
 
     <Button
@@ -31,11 +32,12 @@
         android:background="@drawable/custom_edittext"
         android:ems="10"
         android:gravity="center_vertical"
+        android:hint="Masukkan username baru"
         android:inputType="text"
         android:paddingStart="16dp"
         android:textColor="@color/black"
+        android:textColorHint="@color/gray"
         android:textSize="14sp"
-        android:hint="Masukkan username baru"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/editprofil_imageView" />
@@ -44,13 +46,11 @@
         android:id="@+id/editprofil_imageView"
         android:layout_width="98dp"
         android:layout_height="101dp"
-        android:layout_marginStart="156dp"
-        android:layout_marginTop="116dp"
-        android:layout_marginEnd="157dp"
+        android:layout_marginTop="124dp"
         android:background="@drawable/custom_edittext"
         android:src="@drawable/baseline_person_24"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 

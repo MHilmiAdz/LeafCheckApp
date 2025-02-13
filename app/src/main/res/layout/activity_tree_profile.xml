@@ -5,12 +5,13 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/white"
     tools:context=".TreeProfile">
 
     <ImageView
         android:id="@+id/leafImg"
-        android:layout_width="238dp"
-        android:layout_height="278dp"
+        android:layout_width="187dp"
+        android:layout_height="197dp"
         android:layout_marginStart="86dp"
         android:layout_marginTop="24dp"
         android:layout_marginEnd="87dp"
@@ -63,8 +64,8 @@
 
     <TextView
         android:id="@+id/descTree"
-        android:layout_width="250dp"
-        android:layout_height="190dp"
+        android:layout_width="249dp"
+        android:layout_height="168dp"
         android:layout_marginStart="155dp"
         android:layout_marginTop="12dp"
         android:layout_marginEnd="155dp"
@@ -99,38 +100,50 @@
         android:textColor="@color/white"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.481"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/favButton"
-        app:layout_constraintVertical_bias="0.241" />
-
-    <Button
-        android:id="@+id/favButton"
-        android:layout_width="105dp"
-        android:layout_height="40dp"
-        android:layout_marginTop="56dp"
-        android:background="@drawable/custom_edittext"
-        android:backgroundTint="@color/Leafcolor"
-        android:text="Favorite"
-        android:textColor="@color/white"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.715"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/descTree" />
+        app:layout_constraintVertical_bias="0.103" />
 
     <Button
         android:id="@+id/backbutton"
         android:layout_width="100dp"
         android:layout_height="40dp"
-        android:layout_marginTop="56dp"
+        android:layout_marginTop="24dp"
         android:layout_marginEnd="32dp"
         android:background="@drawable/custom_edittext"
         android:backgroundTint="@color/Leafcolor"
         android:text="Home"
         android:textColor="@color/white"
         app:layout_constraintEnd_toStartOf="@+id/favButton"
-        app:layout_constraintHorizontal_bias="0.931"
+        app:layout_constraintHorizontal_bias="0.922"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/descTree" />
+
+    <Button
+        android:id="@+id/favButton"
+        android:layout_width="105dp"
+        android:layout_height="40dp"
+        android:layout_marginTop="24dp"
+        android:background="@drawable/custom_edittext"
+        android:backgroundTint="@color/Leafcolor"
+        android:text="Favorite"
+        android:textColor="@color/white"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.725"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/descTree" />
+
+    <Button
+        android:id="@+id/deleteTreeButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:backgroundTint="#D30000"
+        android:text="Hapus Pohon"
+        android:textAllCaps="false"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.498"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/updateHealth" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

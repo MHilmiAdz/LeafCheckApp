@@ -40,6 +40,7 @@ class AddTree : AppCompatActivity() {
     private lateinit var btnSubmit: Button
     private lateinit var imgPreview: ImageView
     private lateinit var namaPohon: EditText
+    private lateinit var btnGallery: Button
 
     //System
     private var capturedImageUri: Uri? = null
@@ -57,9 +58,14 @@ class AddTree : AppCompatActivity() {
         btnSubmit = findViewById(R.id.addTreeButton)
         imgPreview = findViewById(R.id.leafPhoto)
         namaPohon = findViewById(R.id.treeAddName)
+        btnGallery = findViewById(R.id.galleryButton)
 
         btnCapture.setOnClickListener {
             checkCameraPermission()
+        }
+
+        btnGallery.setOnClickListener {
+            openGallery()
         }
 
         btnSubmit.setOnClickListener {
@@ -69,11 +75,15 @@ class AddTree : AppCompatActivity() {
         }
     }
 
+    private fun openGallery() {
+        val intent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
+        startActivityForResult(intent, REQUEST_IMAGE_GALLERY)
+    }
+
     private fun openCamera() {
         val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
         startActivityForResult(intent, REQUEST_IMAGE_CAPTURE)
     }
-
 
     private fun checkCameraPermission() {
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
@@ -98,12 +108,20 @@ class AddTree : AppCompatActivity() {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
-        if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == Activity.RESULT_OK) {
-            val imageBitmap = data?.extras?.get("data") as Bitmap
-            imgPreview.setImageBitmap(imageBitmap)
-
-            // Convert bitmap to URI
-            capturedImageUri = saveImageToFile(imageBitmap)
+        if (resultCode == Activity.RESULT_OK) {
+            when (requestCode) {
+                REQUEST_IMAGE_CAPTURE -> {
+                    val imageBitmap = data?.extras?.get("data") as Bitmap
+                    imgPreview.setImageBitmap(imageBitmap)
+                    capturedImageUri = saveImageToFile(imageBitmap)
+                }
+                REQUEST_IMAGE_GALLERY -> {
+                    data?.data?.let { uri ->
+                        imgPreview.setImageURI(uri)
+                        capturedImageUri = uri
+                    }
+                }
+            }
         }
     }
 
@@ -274,5 +292,11 @@ class AddTree : AppCompatActivity() {
         if (::loadingDialog.isInitialized && loadingDialog.isShowing) {
             loadingDialog.dismiss()
         }
+    }
+
+    companion object {
+        private const val REQUEST_IMAGE_CAPTURE = 1
+        private const val REQUEST_IMAGE_GALLERY = 2
+        private const val CAMERA_PERMISSION_CODE = 100
     }
 }

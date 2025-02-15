@@ -62,13 +62,6 @@ The app communicates with a locally deployed Flask API for leaf health analysis.
 
 ---
 
-## 📦 APK Installation
-If you want to try **LeafCheck** without compiling the code, you can download the APK from the **Releases** section.
-
-📥 [Download Latest APK](https://github.com/yourusername/LeafCheck/releases)
-
----
-
 ## ✨ Future Improvements
 🔹 Support for more tree types 🌳  
 🔹 Improved AI accuracy with a cloud-based model ☁️  

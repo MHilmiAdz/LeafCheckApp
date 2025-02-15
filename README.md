@@ -16,8 +16,7 @@ LeafCheck is an AI-based Android application that allows users to **analyze leaf
 ---
 
 ## 📷 Screenshots
-![LeafCheck Screenshot 1](https://via.placeholder.com/400x800)
-![LeafCheck Screenshot 2](https://via.placeholder.com/400x800)
+![LeafCheck Showcase](https://github.com/user-attachments/assets/29ab3178-b5fd-4bb7-972f-32227ac29308)
 
 ---
 
@@ -94,6 +93,7 @@ This project is **open-source** under the [MIT License](LICENSE).
 
 ## 📧 Contact
 For any questions or suggestions, feel free to reach out:
+
 📩 Email: m.hilmi.adz@gmail.com  
 🔗 LinkedIn: [MHA](www.linkedin.com/in/m-hilmi-adzkia)
 
